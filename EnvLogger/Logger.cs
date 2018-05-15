@@ -45,7 +45,7 @@ namespace EnvLogger
                 }
                 else if (parts.Length == 2)
                 {
-                    LOG_LEVELS.Add(parts[0], TryParseLogLevel(parts[1]) ?? LogLevel.ERROR);
+                    LOG_LEVELS.Add(parts[0], TryParseLogLevel(parts[1]) ?? LogLevel.TRACE);
                 }
             }
         }
