@@ -124,11 +124,11 @@ namespace EnvLogger
 
             Console.ForegroundColor = GetConsoleColor(level);
             var ts = DateTime.Now.ToString("yyyy-MM-ddTHH:MM:ssZ");
-            Console.Write($"{level}: ");
+            Console.Error.Write($"{level}: ");
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Write($"{ts}: {_assemblyName}: ");
+            Console.Error.Write($"{ts}: {_assemblyName}: ");
             Console.ForegroundColor = DEFAULT_COLOR;
-            Console.WriteLine($"{fmt}", args);
+            Console.Error.WriteLine($"{fmt}", args);
         }
     }
 }

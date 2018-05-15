@@ -8,18 +8,18 @@ namespace EnvLogger.Tests
     [TestFixture]
     class LoggerTests
     {
-        private StringWriter _stdout;
+        private StringWriter _stderr;
 
         private Logger _log;
 
-        private string Logs { get { return _stdout.ToString(); } }
+        private string Logs { get { return _stderr.ToString(); } }
 
         [SetUp]
         public void SetUp()
         {
             _log = new Logger();
-            _stdout = new StringWriter();
-            Console.SetOut(_stdout);
+            _stderr = new StringWriter();
+            Console.SetError(_stderr);
         }
 
         [Test]
