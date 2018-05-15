@@ -65,6 +65,11 @@ namespace EnvLogger
             _assemblyName = Assembly.GetCallingAssembly().GetName().Name;
         }
 
+        public void Trace(string fmt, params object[] args)
+        {
+            Log(LogLevel.TRACE, fmt, args);
+        }
+
         public void Debug(string fmt, params object[] args)
         {
             Log(LogLevel.DEBUG, fmt, args);
