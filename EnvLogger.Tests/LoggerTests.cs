@@ -8,30 +8,32 @@ namespace EnvLogger.Tests
     [TestFixture]
     class LoggerTests
     {
-        private StringWriter _console;
+        private StringWriter _stdout;
 
         private Logger _log;
+
+        private string Logs { get { return _stdout.ToString(); } }
 
         [SetUp]
         public void SetUp()
         {
             _log = new Logger();
-            _console = new StringWriter();
-            Console.SetOut(_console);
+            _stdout = new StringWriter();
+            Console.SetOut(_stdout);
         }
 
         [Test]
         public void ShouldPrintMessage()
         {
             _log.Error("test {0}", 1);
-            StringAssert.Contains("test 1", _console.ToString());
+            StringAssert.Contains("test 1", Logs);
         }
 
         [Test]
         public void ShouldPrefixMessageWithLogLevel()
         {
             _log.Error("test");
-            StringAssert.StartsWith("ERROR", _console.ToString());
+            StringAssert.StartsWith("ERROR", Logs);
         }
 
         [Test]
@@ -39,7 +41,7 @@ namespace EnvLogger.Tests
         {
             _log.Error("test");
             var re = @"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z.*test";
-            StringAssert.IsMatch(re, _console.ToString());
+            StringAssert.IsMatch(re, Logs);
         }
 
         [Test]
@@ -47,14 +49,14 @@ namespace EnvLogger.Tests
         {
             var asm = Assembly.GetExecutingAssembly().GetName().Name;
             _log.Error("test");
-            StringAssert.IsMatch($"{asm}.*test", _console.ToString());
+            StringAssert.IsMatch($"{asm}.*test", Logs);
         }
 
         [Test]
         public void ShouldNotPrintNonErrorsByDefault()
         {
             _log.Warn("test");
-            Assert.AreEqual("", _console.ToString());
+            Assert.AreEqual("", Logs);
         }
 
         [Test]
@@ -64,17 +66,16 @@ namespace EnvLogger.Tests
             Environment.SetEnvironmentVariable("DOTNET_LOG", $"{asm}=info");
             Logger.ConfigureLevels();
             _log.Info("test");
-            StringAssert.Contains("test", _console.ToString());
+            StringAssert.Contains("test", Logs);
         }
 
         [Test]
         public void ShouldPrintFromGlobalLevel()
         {
-            var asm = Assembly.GetExecutingAssembly().GetName().Name;
             Environment.SetEnvironmentVariable("DOTNET_LOG", "info");
             Logger.ConfigureLevels();
             _log.Info("test");
-            StringAssert.Contains("test", _console.ToString());
+            StringAssert.Contains("test", Logs);
         }
     }
 }
