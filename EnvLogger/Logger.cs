@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace EnvLogger
@@ -8,11 +9,11 @@ namespace EnvLogger
     {
         private static readonly IDictionary<string, LogLevel> LOG_LEVELS;
 
-        private const string  DEFAULT_ASSEMBLY = "?DEFAULT_ASSEMBLY?";
+        private const string  DEFAULT_TYPE = "?DEFAULT_TYPE?";
 
         private static readonly ConsoleColor DEFAULT_COLOR;
 
-        private string _assemblyName;
+        private string _typeName;
 
         static Logger()
         {
@@ -24,7 +25,7 @@ namespace EnvLogger
         internal static void ConfigureLevels()
         {
             LOG_LEVELS.Clear();
-            LOG_LEVELS.Add(DEFAULT_ASSEMBLY, LogLevel.ERROR);
+            LOG_LEVELS.Add(DEFAULT_TYPE, LogLevel.ERROR);
 
             var env = Environment.GetEnvironmentVariable("DOTNET_LOG") ?? "";
             foreach (var asm in env.Split(','))
@@ -33,14 +34,14 @@ namespace EnvLogger
                 if (parts.Length == 1 && !string.IsNullOrEmpty(parts[0]))
                 {
                     var level = TryParseLogLevel(parts[0]);
-                    LOG_LEVELS.Remove(DEFAULT_ASSEMBLY);
+                    LOG_LEVELS.Remove(DEFAULT_TYPE);
                     if (level == null)
                     {
-                        LOG_LEVELS.Add(DEFAULT_ASSEMBLY, LogLevel.ERROR);
+                        LOG_LEVELS.Add(DEFAULT_TYPE, LogLevel.ERROR);
                     }
                     else
                     {
-                        LOG_LEVELS.Add(DEFAULT_ASSEMBLY, (LogLevel)level);
+                        LOG_LEVELS.Add(DEFAULT_TYPE, (LogLevel)level);
                     }
                 }
                 else if (parts.Length == 2)
@@ -62,7 +63,7 @@ namespace EnvLogger
 
         public Logger()
         {
-            _assemblyName = Assembly.GetCallingAssembly().GetName().Name;
+            _typeName = new StackTrace().GetFrames()[1].GetMethod().DeclaringType.FullName;
         }
 
         public void Trace(string fmt, params object[] args)
@@ -92,11 +93,11 @@ namespace EnvLogger
 
         private bool ShouldLog(LogLevel level)
         {
-            if (LOG_LEVELS.ContainsKey(DEFAULT_ASSEMBLY) && LOG_LEVELS[DEFAULT_ASSEMBLY] <= level)
+            if (LOG_LEVELS.ContainsKey(DEFAULT_TYPE) && LOG_LEVELS[DEFAULT_TYPE] <= level)
             {
                 return true;
             }
-            if (LOG_LEVELS.ContainsKey(_assemblyName) && LOG_LEVELS[_assemblyName] <= level)
+            if (LOG_LEVELS.ContainsKey(_typeName) && LOG_LEVELS[_typeName] <= level)
             {
                 return true;
             }
@@ -131,7 +132,7 @@ namespace EnvLogger
             var ts = DateTime.Now.ToString("yyyy-MM-ddTHH:MM:ssZ");
             Console.Error.Write($"{level}: ");
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.Error.Write($"{ts}: {_assemblyName}: ");
+            Console.Error.Write($"{ts}: {_typeName}: ");
             Console.ForegroundColor = DEFAULT_COLOR;
             Console.Error.WriteLine($"{fmt}", args);
         }

@@ -45,11 +45,11 @@ namespace EnvLogger.Tests
         }
 
         [Test]
-        public void ShouldPrefixMessageWithAssembly()
+        public void ShouldPrefixMessageWithType()
         {
-            var asm = Assembly.GetExecutingAssembly().GetName().Name;
+            var type = GetType().FullName;
             _log.Error("test");
-            StringAssert.IsMatch($"{asm}.*test", Logs);
+            StringAssert.IsMatch($"{type}.*test", Logs);
         }
 
         [Test]
@@ -60,10 +60,10 @@ namespace EnvLogger.Tests
         }
 
         [Test]
-        public void ShouldPrintFromAssembly()
+        public void ShouldPrintFromType()
         {
-            var asm = Assembly.GetExecutingAssembly().GetName().Name;
-            Environment.SetEnvironmentVariable("DOTNET_LOG", $"{asm}=info");
+            var type = GetType().FullName;
+            Environment.SetEnvironmentVariable("DOTNET_LOG", $"{type}=info");
             Logger.ConfigureLevels();
             _log.Info("test");
             StringAssert.Contains("test", Logs);
