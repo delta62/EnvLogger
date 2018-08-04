@@ -63,7 +63,7 @@ namespace EnvLogger
 
         public Logger()
         {
-            _typeName = new StackTrace().GetFrames()[1].GetMethod().DeclaringType.FullName;
+            _typeName = new StackTrace().GetFrames()[1].GetMethod().DeclaringType.Name;
         }
 
         public void Trace(string fmt, params object[] args)
