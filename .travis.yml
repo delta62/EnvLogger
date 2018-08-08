@@ -5,3 +5,5 @@ dotnet: 2.1.300
 script:
   - dotnet build
   - dotnet test EnvLogger.Tests
+after_success:
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && ./publish
