@@ -47,7 +47,7 @@ namespace EnvLogger.Tests
         [Test]
         public void ShouldPrefixMessageWithType()
         {
-            var type = GetType().FullName;
+            var type = GetType().Name;
             _log.Error("test");
             StringAssert.IsMatch($"{type}.*test", Logs);
         }
@@ -62,7 +62,7 @@ namespace EnvLogger.Tests
         [Test]
         public void ShouldPrintFromType()
         {
-            var type = GetType().FullName;
+            var type = GetType().Name;
             Environment.SetEnvironmentVariable("DOTNET_LOG", $"{type}=info");
             Logger.ConfigureLevels();
             _log.Info("test");
